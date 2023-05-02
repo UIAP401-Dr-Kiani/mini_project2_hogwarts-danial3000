@@ -1,0 +1,15 @@
+D:\mini_project2_hogwarts-danial3000\hagwartz_console\hagwartz\obj\Debug\net6.0\hagwartz.csproj.AssemblyReference.cache
+D:\mini_project2_hogwarts-danial3000\hagwartz_console\hagwartz\obj\Debug\net6.0\hagwartz.GeneratedMSBuildEditorConfig.editorconfig
+D:\mini_project2_hogwarts-danial3000\hagwartz_console\hagwartz\obj\Debug\net6.0\hagwartz.AssemblyInfoInputs.cache
+D:\mini_project2_hogwarts-danial3000\hagwartz_console\hagwartz\obj\Debug\net6.0\hagwartz.AssemblyInfo.cs
+D:\mini_project2_hogwarts-danial3000\hagwartz_console\hagwartz\obj\Debug\net6.0\hagwartz.csproj.CoreCompileInputs.cache
+D:\mini_project2_hogwarts-danial3000\hagwartz_console\hagwartz\bin\Debug\net6.0\hagwartz.exe
+D:\mini_project2_hogwarts-danial3000\hagwartz_console\hagwartz\bin\Debug\net6.0\hagwartz.deps.json
+D:\mini_project2_hogwarts-danial3000\hagwartz_console\hagwartz\bin\Debug\net6.0\hagwartz.runtimeconfig.json
+D:\mini_project2_hogwarts-danial3000\hagwartz_console\hagwartz\bin\Debug\net6.0\hagwartz.dll
+D:\mini_project2_hogwarts-danial3000\hagwartz_console\hagwartz\bin\Debug\net6.0\hagwartz.pdb
+D:\mini_project2_hogwarts-danial3000\hagwartz_console\hagwartz\obj\Debug\net6.0\hagwartz.dll
+D:\mini_project2_hogwarts-danial3000\hagwartz_console\hagwartz\obj\Debug\net6.0\refint\hagwartz.dll
+D:\mini_project2_hogwarts-danial3000\hagwartz_console\hagwartz\obj\Debug\net6.0\hagwartz.pdb
+D:\mini_project2_hogwarts-danial3000\hagwartz_console\hagwartz\obj\Debug\net6.0\hagwartz.genruntimeconfig.cache
+D:\mini_project2_hogwarts-danial3000\hagwartz_console\hagwartz\obj\Debug\net6.0\ref\hagwartz.dll
