@@ -14,11 +14,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\IRNO\\Desktop\\hagwartz\\hagwartz\\hagwartz.csproj",
+      "projectUniqueName": "D:\\mini_project2_hogwarts-danial3000\\hagwartz_console\\hagwartz\\hagwartz.csproj",
       "projectName": "hagwartz",
-      "projectPath": "C:\\Users\\IRNO\\Desktop\\hagwartz\\hagwartz\\hagwartz.csproj",
+      "projectPath": "D:\\mini_project2_hogwarts-danial3000\\hagwartz_console\\hagwartz\\hagwartz.csproj",
       "packagesPath": "C:\\Users\\IRNO\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\IRNO\\Desktop\\hagwartz\\hagwartz\\obj\\",
+      "outputPath": "D:\\mini_project2_hogwarts-danial3000\\hagwartz_console\\hagwartz\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
