@@ -46,7 +46,7 @@ namespace hagwartz
             rat , cat , owl
         }
         public string group ;
-        bool suitcase ;
+        public bool suitcase ;
         public enum job
         {
             student , teacher
@@ -70,6 +70,9 @@ namespace hagwartz
     {
         public static Student[] students = new Student[100];
         public static int j = 0;
+        public static int ncoming;
+        public DateTime leavetrain;
+        public bool inhagwartz = false;
         public bool accepted = false;
         public int passed_units;
         public int term;
@@ -79,8 +82,7 @@ namespace hagwartz
             string password;
             string username ;
             //check the username and password 
-            if (j == 0 || Student.students[j].accepted == false)
-            {
+                ncoming = -1;
                 bool tf = false;
                 Console.WriteLine("Enter username : ");
                 username = Convert.ToString(Console.ReadLine());
@@ -88,11 +90,27 @@ namespace hagwartz
                 password = Convert.ToString(Console.ReadLine());
                 for(int i=0; i<j; i++)
                 {
-                    if (students[i].password == password && students[i].username == username)
+                    string yn1;
+                    if (students[i].password == password && students[i].username == username && students[i].suitcase == true)
                     {
                         tf = true;
                         Console.WriteLine("welcome to your pannel "+ students[i].name + " " + students[i].lastname);
-                    }  
+                        ncoming = i;
+                        break;
+                    }
+                    else if (students[i].password == password && students[i].username == username && students[i].suitcase == false)
+                    {
+                    tf = true;
+                    Console.WriteLine("welcome to your pannel " + students[i].name + " " + students[i].lastname);
+                    Console.WriteLine("Do you want to close your suitcase and get ready?? Y/N");
+                    yn1 = Convert.ToString(Console.ReadLine());
+                    if (yn1 == "y" || yn1 == "Y" || yn1 == "yes")
+                    {
+                        students[i].suitcase = true;
+                    }
+                    ncoming = i;
+                    break;
+                }
                 }
                 if (!tf) {
                     for (int i = 0; i < Dumbeldor.humansnumber / 8; i++)
@@ -109,15 +127,18 @@ namespace hagwartz
                             students[j].lastname = Human.human[i].lastname;
                             students[j].passed_units = 0;
                             students[j].term = 1;
+                        students[j].leavetrain = new DateTime(2010, (12+j)%11+1, (10+5*j)%29+1);
                             while (!until)
                             {
-                                Console.WriteLine(Human.human[j].name + Human.human[j].mail + " do you want to join the hagwartz :) Y/N");
+                                Console.WriteLine(students[j].name +" "+ Human.human[i].mail + " do you want to join the hagwartz :) Y/N");
+                                Console.WriteLine("the train will leave in " + students[j].leavetrain );
                                 yn = Console.ReadLine();
                                 if (yn == "yes" || yn == "y" || yn == "Y")
                                 {
                                     students[j].accepted = true;
                                     j++;
                                     until = true;
+                                    students[j].suitcase = true;
                                 }
                                 else if (yn == "no" || yn == "n" || yn == "N")
                                 {
@@ -128,18 +149,70 @@ namespace hagwartz
                         }
                     } 
                 }
-            }
-            Console.WriteLine("b) \nc) \nd) \ne)exit");
-            //return to home page or not
-            string choo;
-            choo = Console.ReadLine();
-            if (choo == "e")
+            while (ncoming != -1)
             {
-                Dumbeldor.choose();
+                if (students[ncoming].inhagwartz)
+                {
+                    //???????? rooye in bayad kar shavad
+                    Console.WriteLine("c) \nd) \ne)exit");
+                    //return to home page or not
+                    string choo;
+                    choo = Console.ReadLine();
+                    if (choo == "e")
+                    {
+                        Dumbeldor.choose();
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("b)Go to train\ne)exit");
+                    //return to home page or not
+                    string choo;
+                    choo = Console.ReadLine();
+                    if(choo == "b")
+                    {
+                        gototrain();
+                    }
+                    if (choo == "e")
+                    {
+                        Dumbeldor.choose();
+                    }
+                }
+            }
+            if(ncoming == -1) {
+                Console.WriteLine("e)exit");
+                //return to home page or not
+                string choo;
+                choo = Console.ReadLine();
+                if (choo == "e")
+                {
+                    Dumbeldor.choose();
+                }
+                else
+                {
+                    choosed_student();
+                }
+            }
+        }
+        public static void gototrain()
+        {
+            int when;
+            Console.WriteLine("your train will leave in " + students[ncoming].leavetrain);
+            Console.WriteLine("when do you want to move(enter the hour) ?");
+            when = Convert.ToInt32(Console.ReadLine());
+            if (when == (students[ncoming].leavetrain.Hour)+12)
+            {
+                Console.WriteLine("just in time have a safe trip");
+                students[ncoming].inhagwartz = true;
+            }
+            else if(when < (students[ncoming].leavetrain.Hour)+12)
+            {
+                Console.WriteLine("you arrived soon please wait until the train come :(");
+                students[ncoming].inhagwartz = true;
             }
             else
             {
-                choosed_student();
+                Console.WriteLine("Your late the train leave the station try another day at this time " + students[ncoming].leavetrain);
             }
         }
     }
@@ -216,10 +289,10 @@ namespace hagwartz
     }
     public class Lessons
     {
-        public DateTime time;
+        public DateTime[] time;
         public int numberofstudents;
         public string name ;
-        public int presentationterm;
+        public int[] presentationterm;
         public int capacity;
     }
 
