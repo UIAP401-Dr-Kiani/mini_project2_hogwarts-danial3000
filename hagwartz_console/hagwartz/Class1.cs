@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 //using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace hagwartz
@@ -35,6 +36,8 @@ namespace hagwartz
                 Teacher.choosed_teacher();
             if (choo == "c")
                 Student.choosed_student();
+            else 
+                choose();
         }
     }
 
@@ -57,13 +60,27 @@ namespace hagwartz
     
     public class Team
     {
+        public static Team teams = new Team();
+        public static int team_member_numbers = 0;
         public int score;
         public enum group
         {
             slytherin , ravenclaw , gryfinndor , hufflepuff
         }
-        public string[] members;
+        public static group[] teamofmembers = new group[100];
+        public static string[] members = new string[100];
         public string[] quideech_members;
+        public static void student_group()
+        {
+            Console.WriteLine("Your group will assign by an spiker hat");
+            Team teams = new Team();
+            members[Student.ncoming] = Student.students[Student.ncoming].name + Student.students[Student.ncoming].lastname;
+            Random random = new Random();
+            int n = random.Next(0,100);
+            teamofmembers[Student.ncoming] = (group)(n%4);
+            Student.students[Student.ncoming].havegroup = true;
+            team_member_numbers++;
+        }
     }
 
     public class Student : Acceptable
@@ -74,6 +91,7 @@ namespace hagwartz
         public DateTime leavetrain;
         public bool inhagwartz = false;
         public bool accepted = false;
+        public bool havegroup = false;
         public int passed_units;
         public int term;
         public int dormitory_number;
@@ -154,12 +172,22 @@ namespace hagwartz
                 if (students[ncoming].inhagwartz)
                 {
                     //???????? rooye in bayad kar shavad
-                    Console.WriteLine("c) \nd) \ne)exit");
-                    //return to home page or not
+                    Console.WriteLine("c)Determine Team \nd) \ne)exit");
                     string choo;
                     choo = Console.ReadLine();
-                    if (choo == "e")
+                    if (choo == "c" && Student.students[ncoming].havegroup==false)
                     {
+                        Team.student_group();
+                        Console.WriteLine("your team is " + Team.teamofmembers[ncoming]);
+                        Dormitory.dormitoryfunc();
+                    }
+                    else
+                    {
+                        Console.WriteLine("you are in a group right now");
+                    }
+                        //return to home page or not
+                    if (choo == "e")
+                    {   
                         Dumbeldor.choose();
                     }
                 }
@@ -222,8 +250,13 @@ namespace hagwartz
         public bool concurrent_teaching;
         public static void choosed_teacher()
         {
+            Console.WriteLine("b)Select Unit \nc) \nd) \ne)exit");
             string choo;
-            choo = Console.ReadLine();
+            choo = Convert.ToString(Console.ReadLine());
+            if(choo == "b")
+            {
+
+            }
             if (choo == "e")
             {
                 Dumbeldor.choose();
@@ -237,7 +270,7 @@ namespace hagwartz
     public class Dumbeldor : Acceptable
     {
         public static int humansnumber;
-        Dormitory[] list_of_dormitory;
+        public static Dormitory[] list_of_dormitory = new Dormitory[100];
         //start of singelton
         static private Dumbeldor dum;
         private Dumbeldor()
@@ -262,7 +295,7 @@ namespace hagwartz
                 Console.WriteLine("a)send email");
             }
             // access to methodes
-            Console.WriteLine("b) mailes \nc) \nd) \ne)exit");
+            Console.WriteLine("b)mailes \nc)list of dormitory \nd) \ne)exit");
             choo = Console.ReadLine();
             //writing email as the dumbeldor
             if (choo == "a" && !sendemail) 
@@ -275,6 +308,22 @@ namespace hagwartz
                     Human.human[i].mail = mail;
                 }
                 sendemail=true;
+            }
+            if(choo == "c")
+            {
+                string sexuality;
+                for(int i=0; i<Dormitory.membersnumber; i++)
+                {
+                    if (list_of_dormitory[i].gender == false)
+                    {
+                        sexuality = "male";
+                    }
+                    else
+                    {
+                        sexuality = "female";
+                    }
+                    Console.WriteLine("gender : " + sexuality + "   " + "fullname : " + list_of_dormitory[i].name +"   "+ "floor : " + list_of_dormitory[i].floor +"   "+ "room : " + list_of_dormitory[i].room + "bed : " + list_of_dormitory[i].bed);
+                }
             }
             //return to home page or not
             if(choo == "e")
@@ -322,16 +371,50 @@ namespace hagwartz
     }
     public class Dormitory
     {
+        public static int membersnumber = 0;
+        //public static Dormitory[] dormitorynum = new Dormitory[100];
+        public string name;
         public string group;
         public int floor;
         public int room;
         public int bed;
         public bool gender;
-        Dormitory(int frb)
+        public static void dormitoryfunc()
         {
-            this.floor = (frb / 100) % 5;
-            this.room = (frb / 10) % 10;
-            this.bed = (frb % 10);
+            int frb1;
+            if (Team.teamofmembers[Student.ncoming] == Team.group.slytherin)
+            {
+                frb1 = 0;
+                Dumbeldor.list_of_dormitory[membersnumber] = new Dormitory(frb1,Student.ncoming);
+            }
+            else if (Team.teamofmembers[Student.ncoming] == Team.group.ravenclaw)
+            {
+                frb1 = 200;
+                Dumbeldor.list_of_dormitory[membersnumber] = new Dormitory(frb1,Student.ncoming);
+            }
+            else if (Team.teamofmembers[Student.ncoming] == Team.group.gryfinndor)
+            {
+                frb1 = 400;
+                Dumbeldor.list_of_dormitory[membersnumber] = new Dormitory(frb1,Student.ncoming);
+            }
+            else if (Team.teamofmembers[Student.ncoming] == Team.group.hufflepuff)
+            {
+                frb1 = 600;
+                Dumbeldor.list_of_dormitory[membersnumber] = new Dormitory(frb1,Student.ncoming);
+            }
+            membersnumber++;
+        }
+        Dormitory(int frb , int number)
+        {
+            this.name = Student.students[number].name + Student.students[number].lastname;
+            this.gender = Student.students[number].gender;
+            this.name = Student.students[number].name;
+            this.group = Convert.ToString(Team.teamofmembers[number]);
+            frb = frb + (membersnumber / 5) * 10 + (membersnumber % 5);
+            // we have 8 floor 11 room and 5 bed (from zero to i-1)
+            this.floor = (frb / 100) % 8;
+            this.room = ((frb / 10) % 10) % 11;
+            this.bed = (frb % 5) % 5;
         }
     }
 }
