@@ -171,17 +171,43 @@ namespace hagwartz
             {
                 if (students[ncoming].inhagwartz)
                 {
-                    //???????? rooye in bayad kar shavad
-                    Console.WriteLine("c)Determine Team \nd) \ne)exit");
+                    Console.WriteLine("c)Determine Team \nd)select units \ne)exit");
                     string choo;
                     choo = Console.ReadLine();
+                    if (choo == "d")
+                    {
+                        //start of writting the lessons and times
+                        for(int i=0; i<10; i++)
+                        {
+                            if (Teacher.teacher[i].select_unit == true)
+                            {
+                                for (int f = 0; f < 10; f++)
+                                {
+                                    for (int j = 0; j < 6; j++)
+                                    {
+                                        for (int k = 0; k < 5; k++)
+                                        {
+                                            for (int d = 0; d < 2; d++)
+                                            {
+                                                if (Lessons.lessons[f] == Teacher.teacher[i].jadval[j,k,d])
+                                                {
+                                                    Console.WriteLine(Lessons.lessons[f]+" "+ Teacher.teacher[i].username+" "+$"{8+2*j}:{10+2*j}");
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        //end of writting the lessons and times
+                    }
                     if (choo == "c" && Student.students[ncoming].havegroup==false)
                     {
                         Team.student_group();
                         Console.WriteLine("your team is " + Team.teamofmembers[ncoming]);
                         Dormitory.dormitoryfunc();
                     }
-                    else
+                    else if(choo == "c" && Student.students[ncoming].havegroup == true)
                     {
                         Console.WriteLine("you are in a group right now");
                     }
@@ -247,15 +273,101 @@ namespace hagwartz
 
     public class Teacher : Acceptable
     {
-        public bool concurrent_teaching;
+        public bool select_unit = false;
+        public static string[] nameofclasses = new string[30];
+        public string[, ,] jadval = new string[6,5,2];
+        public bool asked_concurrent_teaching = false;
+        public static int teacher_ncoming;
+        public static Teacher[] teacher = new Teacher[100];
+        public bool concurrent_teaching = false;
         public static void choosed_teacher()
         {
+            bool tf = false;
+            string username;
+            string password;
+            Console.WriteLine("enter your username : ");
+            username = Console.ReadLine();
+            Console.WriteLine("enter your password : ");
+            password = Console.ReadLine();
+            for (int i = 0; i <= 9; i++)
+            {
+                if (teacher[i].username == username && teacher[i].password == password)
+                {
+                    teacher_ncoming = i;
+                    tf = true;
+                    break;
+                }
+            }
             Console.WriteLine("b)Select Unit \nc) \nd) \ne)exit");
             string choo;
             choo = Convert.ToString(Console.ReadLine());
+            bool btf = true;
             if(choo == "b")
             {
-
+               
+                if(tf && !teacher[teacher_ncoming].select_unit)
+                {
+                    int i = 0, j = 0, k = 0 , d=0;
+                    string answer = "";
+                    if (teacher[teacher_ncoming].asked_concurrent_teaching == false)
+                    {
+                        Console.WriteLine("hello miss/mr " + teacher[teacher_ncoming].username +" can you be in two place at the same time (Y/N)?");
+                        answer = Console.ReadLine();    
+                        if(answer =="y" || answer == "Y" || answer == "yes")
+                        {
+                            teacher[teacher_ncoming].concurrent_teaching = true;
+                            teacher[teacher_ncoming].asked_concurrent_teaching = true;
+                        }
+                        else if (answer == "n" || answer == "N" || answer == "no")
+                        {
+                            teacher[teacher_ncoming].concurrent_teaching = false;
+                            teacher[teacher_ncoming].asked_concurrent_teaching = true;
+                        }
+                    }
+                    if (!teacher[teacher_ncoming].asked_concurrent_teaching)
+                    {
+                        Console.WriteLine("you have selected your units and times of it");
+                    }
+                else if (teacher[teacher_ncoming].asked_concurrent_teaching)
+                    {
+                        Console.WriteLine("how many lesson do you can teach?");
+                        i = Convert.ToInt32(Console.ReadLine());
+                        for(int i1=0; i1<i; i1++)
+                        {
+                            Console.WriteLine("Enter the name of lesson : ");
+                            nameofclasses[i1] = Convert.ToString(Console.ReadLine());
+                            Console.WriteLine("how many seisson in week do you have?");
+                            j = Convert.ToInt32(Console.ReadLine());
+                            for (int j1 = 0; j1 < j; j1++)
+                            {
+                                bool possible = true;
+                                while (possible)
+                                {
+                                    Console.WriteLine("Enter the number of day (saturday=0 ; sunday=1 ; ...)");
+                                    k = Convert.ToInt32(Console.ReadLine());
+                                    Console.WriteLine("enter the hour of start of your class (all classes will long 2 hours)");
+                                    d = Convert.ToInt32(Console.ReadLine());
+                                    if (teacher[teacher_ncoming].jadval[k, (d - 8) / 2, 0] == null)
+                                    {
+                                        teacher[teacher_ncoming].jadval[k, (d - 8) / 2, 0] = nameofclasses[i1];
+                                        possible = false;
+                                    }
+                                    else if (teacher[teacher_ncoming].jadval[k, (d - 8) / 2, 1] == null && teacher[teacher_ncoming].concurrent_teaching == true && teacher[teacher_ncoming].jadval[k, (d - 8) / 2, 0] != nameofclasses[i1])
+                                    {
+                                        teacher[teacher_ncoming].jadval[k, (d - 8) / 2, 1] = nameofclasses[i1];
+                                        possible = false;
+                                    }
+                                    else
+                                    {
+                                        Console.WriteLine("Impossible");
+                                        possible = true;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    teacher[teacher_ncoming].select_unit = true;
+                }
             }
             if (choo == "e")
             {
@@ -338,6 +450,7 @@ namespace hagwartz
     }
     public class Lessons
     {
+        public static string[] lessons = new string[15];
         public DateTime[] time;
         public int numberofstudents;
         public string name ;
