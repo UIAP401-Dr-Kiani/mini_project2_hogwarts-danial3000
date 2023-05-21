@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 //using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -85,6 +86,7 @@ namespace hagwartz
 
     public class Student : Acceptable
     {
+        public string[,,] jadval = new string[6, 5,1];
         public static Student[] students = new Student[100];
         public static int j = 0;
         public static int ncoming;
@@ -95,6 +97,16 @@ namespace hagwartz
         public int passed_units;
         public int term;
         public int dormitory_number;
+        public static string whichday(int a)
+        {
+            if (a == 0) return "saturday";
+            else if (a == 1) return "sunday";
+            else if (a == 2) return "monday";
+            else if (a == 3) return "tuseday";
+            else if (a == 4) return "wednesday";
+            else if (a == 5) return "thurseday";
+            else return "out of range";
+        }
         public static void choosed_student()
         {
             string password;
@@ -131,7 +143,7 @@ namespace hagwartz
                 }
                 }
                 if (!tf) {
-                    for (int i = 0; i < Dumbeldor.humansnumber / 8; i++)
+                    for (int i = 0; i < (Dumbeldor.humansnumber / 9)-Teacher.noteacher; i++)
                     {
                         if (Human.human[i].username == username && Human.human[i].password == password)
                         {
@@ -177,7 +189,7 @@ namespace hagwartz
                     if (choo == "d")
                     {
                         //start of writting the lessons and times
-                        for(int i=0; i<10; i++)
+                        for(int i=0; i<Teacher.noteacher ; i++)
                         {
                             if (Teacher.teacher[i].select_unit == true)
                             {
@@ -191,7 +203,7 @@ namespace hagwartz
                                             {
                                                 if (Lessons.lessons[f] == Teacher.teacher[i].jadval[j,k,d])
                                                 {
-                                                    Console.WriteLine(Lessons.lessons[f]+" "+ Teacher.teacher[i].username+" "+$"{8+2*j}:{10+2*j}");
+                                                    Console.WriteLine(Lessons.lessons[f]+" "+ Teacher.teacher[i].username+" "+$"{8+2*k}:{10+2*k} day of week : {whichday(j)} number : {Lessons.code_of_class_teachers[i,f,0]}");
                                                 }
                                             }
                                         }
@@ -200,6 +212,36 @@ namespace hagwartz
                             }
                         }
                         //end of writting the lessons and times
+                        int number_of_lessons, th_of_lessons;
+                        Console.WriteLine("enter the number of lessons :)");
+                        number_of_lessons = Convert.ToInt32(Console.ReadLine());
+                        for(int i=0; i<number_of_lessons ; i++)
+                        {
+                            th_of_lessons = Convert.ToInt32(Console.ReadLine());
+                            for(int t=0; t<30/*tedad teacher ha*/ ; t++)
+                            {
+                                for(int h=0; h<10 ; h++)
+                                {
+                                    if (Lessons.code_of_class_teachers[t,h,0] == Convert.ToString(th_of_lessons))
+                                    {
+                                        for (int r1 = 0; r1 < 6; r1++) {
+                                            for (int r2 = 0; r2 < 5; r2++) {
+                                                for (int d = 0; d < 2; d++) {
+                                                    if (students[ncoming].jadval[r1, r2, 0] != null && d==0)
+                                                    {
+                                                        Console.WriteLine("Impossible");
+                                                    }
+                                                    else if (Teacher.teacher[t].jadval[r1,r2,d] == Lessons.lessons[h] && students[ncoming].jadval[r1, r2, 0] == null)
+                                                    {
+                                                        students[ncoming].jadval[r1,r2,0] = Lessons.lessons[h];
+                                                    }                                                   
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                     if (choo == "c" && Student.students[ncoming].havegroup==false)
                     {
@@ -273,11 +315,12 @@ namespace hagwartz
 
     public class Teacher : Acceptable
     {
+        public static int noteacher = 0;
         public bool select_unit = false;
         public static string[] nameofclasses = new string[30];
         public string[, ,] jadval = new string[6,5,2];
         public bool asked_concurrent_teaching = false;
-        public static int teacher_ncoming;
+        public static int teacher_ncoming = -1;
         public static Teacher[] teacher = new Teacher[100];
         public bool concurrent_teaching = false;
         public static void choosed_teacher()
@@ -285,97 +328,125 @@ namespace hagwartz
             bool tf = false;
             string username;
             string password;
-            Console.WriteLine("enter your username : ");
-            username = Console.ReadLine();
-            Console.WriteLine("enter your password : ");
-            password = Console.ReadLine();
-            for (int i = 0; i <= 9; i++)
+            while (!tf)
             {
-                if (teacher[i].username == username && teacher[i].password == password)
+                Console.WriteLine("enter your username : ");
+                username = Console.ReadLine();
+                Console.WriteLine("enter your password : ");
+                password = Console.ReadLine();
+                for (int i = 0; i <= Teacher.noteacher; i++)
                 {
-                    teacher_ncoming = i;
-                    tf = true;
-                    break;
+                    if (teacher[i].username == username && teacher[i].password == password)
+                    {
+                        teacher_ncoming = i;
+                        tf = true;
+                        break;
+                    }
+                }
+                if (!tf)
+                {
+                    string chose;
+                    Console.WriteLine("a)try again \ne)exit");
+                    chose = Console.ReadLine();
+                    if(chose == "e" || chose == "E")
+                    {
+                        Dumbeldor.choose();
+                    }
+                    else
+                    {
+                        choosed_teacher();
+                    }
                 }
             }
+            while (tf) { 
             Console.WriteLine("b)Select Unit \nc) \nd) \ne)exit");
             string choo;
             choo = Convert.ToString(Console.ReadLine());
             bool btf = true;
-            if(choo == "b")
-            {
-               
-                if(tf && !teacher[teacher_ncoming].select_unit)
+                if (choo == "b")
                 {
-                    int i = 0, j = 0, k = 0 , d=0;
-                    string answer = "";
-                    if (teacher[teacher_ncoming].asked_concurrent_teaching == false)
+
+                    if (tf && !teacher[teacher_ncoming].select_unit)
                     {
-                        Console.WriteLine("hello miss/mr " + teacher[teacher_ncoming].username +" can you be in two place at the same time (Y/N)?");
-                        answer = Console.ReadLine();    
-                        if(answer =="y" || answer == "Y" || answer == "yes")
+                        int i = 0, j = 0, k = 0, d = 0;
+                        string answer = "";
+                        if (teacher[teacher_ncoming].asked_concurrent_teaching == false)
                         {
-                            teacher[teacher_ncoming].concurrent_teaching = true;
-                            teacher[teacher_ncoming].asked_concurrent_teaching = true;
-                        }
-                        else if (answer == "n" || answer == "N" || answer == "no")
-                        {
-                            teacher[teacher_ncoming].concurrent_teaching = false;
-                            teacher[teacher_ncoming].asked_concurrent_teaching = true;
-                        }
-                    }
-                    if (!teacher[teacher_ncoming].asked_concurrent_teaching)
-                    {
-                        Console.WriteLine("you have selected your units and times of it");
-                    }
-                else if (teacher[teacher_ncoming].asked_concurrent_teaching)
-                    {
-                        Console.WriteLine("how many lesson do you can teach?");
-                        i = Convert.ToInt32(Console.ReadLine());
-                        for(int i1=0; i1<i; i1++)
-                        {
-                            Console.WriteLine("Enter the name of lesson : ");
-                            nameofclasses[i1] = Convert.ToString(Console.ReadLine());
-                            Console.WriteLine("how many seisson in week do you have?");
-                            j = Convert.ToInt32(Console.ReadLine());
-                            for (int j1 = 0; j1 < j; j1++)
+                            Console.WriteLine("hello miss/mr " + teacher[teacher_ncoming].username + " can you be in two place at the same time (Y/N)?");
+                            answer = Console.ReadLine();
+                            if (answer == "y" || answer == "Y" || answer == "yes")
                             {
-                                bool possible = true;
-                                while (possible)
+                                teacher[teacher_ncoming].concurrent_teaching = true;
+                                teacher[teacher_ncoming].asked_concurrent_teaching = true;
+                            }
+                            else if (answer == "n" || answer == "N" || answer == "no")
+                            {
+                                teacher[teacher_ncoming].concurrent_teaching = false;
+                                teacher[teacher_ncoming].asked_concurrent_teaching = true;
+                            }
+                        }
+                        if (!teacher[teacher_ncoming].asked_concurrent_teaching)
+                        {
+                            Console.WriteLine("you have selected your units and times of it");
+                        }
+                        else if (teacher[teacher_ncoming].asked_concurrent_teaching)
+                        {
+                            Console.WriteLine("how many lesson do you can teach?");
+                            i = Convert.ToInt32(Console.ReadLine());
+                            for (int i1 = 0; i1 < i; i1++)
+                            {
+                                Console.WriteLine("Enter the name of lesson : ");
+                                nameofclasses[i1] = Convert.ToString(Console.ReadLine());
+                                for (int h = 0; h < 11; h++)
                                 {
-                                    Console.WriteLine("Enter the number of day (saturday=0 ; sunday=1 ; ...)");
-                                    k = Convert.ToInt32(Console.ReadLine());
-                                    Console.WriteLine("enter the hour of start of your class (all classes will long 2 hours)");
-                                    d = Convert.ToInt32(Console.ReadLine());
-                                    if (teacher[teacher_ncoming].jadval[k, (d - 8) / 2, 0] == null)
+                                    if (Lessons.lessons[h] == nameofclasses[i1])
                                     {
-                                        teacher[teacher_ncoming].jadval[k, (d - 8) / 2, 0] = nameofclasses[i1];
-                                        possible = false;
+                                        Lessons.code_of_class_teachers[teacher_ncoming,h, 0] = Convert.ToString(Lessons.code_select_unit);
+                                        Lessons.code_select_unit++;
+                                        break;
                                     }
-                                    else if (teacher[teacher_ncoming].jadval[k, (d - 8) / 2, 1] == null && teacher[teacher_ncoming].concurrent_teaching == true && teacher[teacher_ncoming].jadval[k, (d - 8) / 2, 0] != nameofclasses[i1])
+                                }
+                                Console.WriteLine("how many seisson in week do you have?");
+                                j = Convert.ToInt32(Console.ReadLine());
+                                for (int j1 = 0; j1 < j; j1++)
+                                {
+                                    bool possible = true;
+                                    while (possible)
                                     {
-                                        teacher[teacher_ncoming].jadval[k, (d - 8) / 2, 1] = nameofclasses[i1];
-                                        possible = false;
-                                    }
-                                    else
-                                    {
-                                        Console.WriteLine("Impossible");
-                                        possible = true;
+                                        Console.WriteLine("Enter the number of day (saturday=0 ; sunday=1 ; ...)");
+                                        k = Convert.ToInt32(Console.ReadLine());
+                                        Console.WriteLine("enter the hour of start of your class (all classes will long 2 hours)");
+                                        d = Convert.ToInt32(Console.ReadLine());
+                                        if (teacher[teacher_ncoming].jadval[k, (d - 8) / 2, 0] == null)
+                                        {
+                                            teacher[teacher_ncoming].jadval[k, (d - 8) / 2, 0] = nameofclasses[i1];
+                                            possible = false;
+                                        }
+                                        else if (teacher[teacher_ncoming].jadval[k, (d - 8) / 2, 1] == null && teacher[teacher_ncoming].concurrent_teaching == true && teacher[teacher_ncoming].jadval[k, (d - 8) / 2, 0] != nameofclasses[i1])
+                                        {
+                                            teacher[teacher_ncoming].jadval[k, (d - 8) / 2, 1] = nameofclasses[i1];
+                                            possible = false;
+                                        }
+                                        else
+                                        {
+                                            Console.WriteLine("Impossible");
+                                            possible = true;
+                                        }
                                     }
                                 }
                             }
                         }
+                        teacher[teacher_ncoming].select_unit = true;
                     }
-                    teacher[teacher_ncoming].select_unit = true;
                 }
-            }
-            if (choo == "e")
-            {
-                Dumbeldor.choose();
-            }
-            else
-            {
-                choosed_teacher();
+                else if (choo == "e")
+                {
+                    Dumbeldor.choose();
+                }
+                /*else
+                {
+                    choosed_teacher();
+                }*/
             }
         }
     }
@@ -450,6 +521,8 @@ namespace hagwartz
     }
     public class Lessons
     {
+        public static int code_select_unit = 0 ;
+        public static string[,,] code_of_class_teachers = new string[100,11,1];                                                                                               
         public static string[] lessons = new string[15];
         public DateTime[] time;
         public int numberofstudents;
